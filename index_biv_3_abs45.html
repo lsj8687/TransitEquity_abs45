@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Transit Equity: Different Color
+    </title>
+</head>
+
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js"></script>
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css" type="text/css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
+<script src="https://d3js.org/d3.v5.min.js"></script>
+
+<style>
+
+    *{
+        font-family: 'Source Sans Pro', sans-serif;
+        margin: 0;
+    }
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: #424141;
+    }
+    #map_bef {
+        position: absolute;
+        top: 0px;
+        bottom: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+    }
+    #map_aft {
+        position: absolute;
+        top: 0px;
+        bottom: 0px;
+        right: 0px;
+        width: 100%;
+        z-index: 0
+    }
+    #navbar {
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      width: 100%;
+      height: 90px;
+      background-color: black;
+      opacity: 0.25;
+    }
+    .logo-wrapper {
+        position: absolute;
+        top: 30px;
+        right: 10px;
+        width: 310px;
+        height: 50px;
+        display: -webkit-flex;
+        display: -ms-flex;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    .logo-text {
+        color: white;
+        font-size: 12;
+        font-family: 'Heebo', san-serif;
+        font-weight: 600;
+    }
+    .legend-box{
+      position: absolute;
+      left: 20px;
+      top: 200px;
+      width: 260px;
+      height: 230px;
+      color: white;
+      font-weight: 500;
+      background-color: black;
+      opacity: 0.3;
+      border-radius: 10px;
+    }
+    .legend-wrapper{
+      position: absolute;
+      left: 20px;
+      top: 200px;
+      width: 260px;
+      height: 230px;
+      color: white;
+      font-weight: 500;
+      border-radius: 10px;
+    }
+    .legendTitle{
+      position: absolute;
+      left: 10px;
+      top: 7px;
+      font-size:14px;
+    }
+    .legendBoxes{
+      position: absolute;
+      left: 10px;
+      top: 100px;
+      display: flex;
+      flex-direction: column;
+    }
+    .legendBox{
+      margin-top: 4px;
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      background-color: black;
+    }
+    .legendText{
+      position: absolute;
+      left: 25px;
+      top: 100px;
+      margin-left: 10px;
+      color: white;
+      font-weight: 300;
+      display: flex;
+      flex-direction: column;
+    }
+    .titleMain{
+      position: absolute;
+      left: 30px;
+      top: 20px;
+      font-size: 36px;
+      font-weight: 800;
+      color: white;
+    }
+    .session {
+      position: absolute;
+      left: 20px;
+      top: 200px;
+      width: 270px;
+      height: 110px;
+      color: white;
+      border-radius: 10px;
+      z-index: 3;
+    }
+    .row {
+        padding: 4px;
+        display: flex;
+        margin-bottom: 120px;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    input[type="radio"] {
+        display: none;
+    }
+    label {
+        position: relative;
+        cursor: pointer;
+        padding-right: 18px;
+        font-size: 16px;
+        padding-top: 5px;
+    }
+    label:nth-child(1) {
+        padding-right: 0;
+    }
+    label::before {
+        content: "";
+        border: 1.5px solid white;
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        margin: -4px 4px;
+        margin-left: 0;
+        border-radius: 50%;
+    }
+    label::after {
+        content: "";
+        display: inline-block;
+        position: absolute;
+        width: 9px;
+        height: 9px;
+        left: 1.8px;
+        top: 15px;
+        margin: -2px 10px;
+        margin-left: 0;
+        border-radius: 50%;
+        transition: all 0.4s;
+    }
+    input[type="radio"]:checked + label::after {
+        background: #04AA6D;
+    }
+  .sliderContainer {
+      left: 0%;
+      top: 325px;
+      position: absolute;
+      width: 260px;
+      height: 120px;
+      z-index: 1;
+  }
+  .sliderContent {
+    font-weight: 300;
+    font-size: 13px;
+    color: white;
+    position: absolute;
+    left: 23px;
+    top: 0px;
+    width: 100%;
+  }
+  .slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 10px;
+    border-radius: 5px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.6;
+  }
+  .slider:hover {
+    opacity: 1;
+  }
+  .slider::-webkit-slider-thumb {
+      -webkit-appearance: none; /* Override default look */
+      appearance: none;
+      width: 20px; /* Set a specific slider handle width */
+      height: 20px; /* Slider handle height */
+      border-radius: 50%;
+      background: #04AA6D; /* Green background */
+      cursor: pointer; /* Cursor on hover */
+  }
+  .titleMap{
+      position: absolute;
+      left: 0px;
+      top: 100px;
+      width: 100%;
+      height: 50px;
+      margin-left: 10px;
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+  }
+  .titleMapSub {
+      font-size: 22px;
+      font-weight: 200;
+      margin-top: 5px;
+      display: flex;
+      justify-content: space-around;
+  }
+
+</style>
+
+
+<body>
+  <div id="map_bef">
+    <div class="session">
+        <div class='session_demand'>
+          <div class="session_title">
+            <p style="font-size: 21px; font-weight: 600;">Transit demand type</p>      
+          </div>
+          <div class='row' id='demand'>
+            <input id='dep' type='radio' name='toggle_dem' onclick="legend_dep()" value='dep' checked='checked'>
+            <label for='dep'>Transit-dependent population (%)</label>
+            <input id='min' type='radio' name='toggle_dem' onclick="legend_min()" value='min'>
+            <label for='min'>Minority population (%)</label>
+            <input id='inc' type='radio' name='toggle_dem' onclick="legend_inc()" value='inc'>
+            <label for='inc'>Household income</label>
+          </div>
+        </div>
+      </div>
+  </div>
+  <div id="map_aft"></div>
+  <div id="navbar"></div>
+  <div class="titleMain">
+    <a href="." style="text-decoration:none; color:white;">Atlanta Public Transit Equity Explorer</a>
+  </div>
+  <div class="logo-wrapper">
+    <a href="https://gatech.edu/"><img src="https://www.gatech.edu/sites/all/themes/gt/images/gt-logo-oneline-white.svg" alt="" width="150" height="30"></a>
+    <a href="https://cspav.gatech.edu/" style="margin-left:10px; font-size:12px; text-decoration:none">
+      <p class="logo-text">Center for Spatial Planning Analytics and Visualization</p>
+    </a>
+  </div>
+  <!-- <div class="legend-box"></div>
+  <div class="legend-wrapper">
+    <div class="legendTitle" id="legendTitle">
+      <p>A1: Low Minority% + Low Transit Service <br> D1: Low Minority% + High Transit Service <br> A4: High Minority% + Low Transit Service <br> D4: High Minority% + High Transit Service</p>
+    </div>
+  </div> -->
+  <div class="sliderContainer">
+    <div class='sliderContent'>
+      <p style="margin-bottom: 10px; font-size:16px; font-weight: 300;">
+        Accessible within <b><span id="sliderValue"></b> </span> minutes
+      </p>
+    <input id='myRange' class="slider" type="range" min="30" max="75" value="45" step="3">
+    <p style="text-align:left; margin-bottom: 0em;"> 30 minutes
+      <span style="float:right"> 75 minutes </span> </p>
+    </div>
+  </div>
+  <div class="titleMap">
+    <div class="titleMapSub">
+      <p style="color:white; text-align:center">
+        <font size='+2'><b>Conventional Public Transit System</b></font></p>
+      <p style="color:white; text-align:center">
+        <font size='+2'><b>On-demand Multimodal Transit System</b></font></p>
+    </div>
+  </div>
+
+
+
+  <script>
+
+  // color
+  const color_3class = ["#ffffff", "#8896bf", "#193583", "#89a08c", "#FFEAEA", "#8a85ad", "#1d4a22", "#8b8f7a", "#ffd8d8"]
+  const color_3class_14 = {
+      'A1': color_3class[0], 
+      'A2': color_3class[1], 
+      'A3': color_3class[2], 
+      'B1': color_3class[3], 
+      'B2': color_3class[4], 
+      'B3': color_3class[5], 
+      'C1': color_3class[6], 
+      'C2': color_3class[7], 
+      'C3': color_3class[8], 
+  };
+  
+  window.onresize = function () {
+      setWindowSize();
+  }
+
+  function setWindowSize() {
+      var width = (window.innerWidth - 1) /2;
+      d3.select("#map_bef").style("width", width + "px")
+      d3.select("#map_aft").style("width", width + "px")
+  }
+
+  setWindowSize();
+
+  let slider = document.getElementById("myRange");
+  let sliderValue = document.getElementById("sliderValue");
+  sliderValue.innerHTML = 45;
+
+// Create the map with token !토큰이 달라지면 폴리곤 및 다른 정보가 사라짐
+  mapboxgl.accessToken = 'pk.eyJ1IjoibHNqOTciLCJhIjoiY2wzMGNmZjFkMTltYTNpcDhheTJkZnYxNiJ9.Ub65O1NG1yKYqC1ApgCJvw';
+
+  const map_bef = new mapboxgl.Map({
+      container: 'map_bef', // container ID // style URL //dark-v10 // style URL //dark-v10
+      style: 'mapbox://styles/uhwang3/ckwufpsse0va014pe2lwbyr8b',
+      center: [-84.39132, 33.822556], // starting position [lng, lat]
+      zoom: 9.5, // starting zoom
+      minZoom: 3
+  });
+
+  const map_aft = new mapboxgl.Map({
+      container: 'map_aft', // container ID // style URL //dark-v10 // style URL //dark-v10
+      style: 'mapbox://styles/uhwang3/ckwufpsse0va014pe2lwbyr8b',
+      center: [-84.39132, 33.822556], // starting position [lng, lat]
+      zoom: 9.5, // starting zoom
+      minZoom: 3,
+  });
+
+  var container = map_bef.getCanvasContainer();
+
+  var svg = d3
+      .select(container)
+      .append("svg")
+      .attr("width", "100%")
+      .attr("height", "100%")
+      .style("position", "absolute")
+      .style("z-index", 1);
+      
+  var margin = 80;
+  var rect_width = 30;
+  var legend_w = rect_width * 3;
+  var legend_x = margin + legend_w/2; //the center for rotation
+  var legend_y = window.innerHeight - margin - legend_w/2; //the center for rotation
+  
+  // create bivariate color scheme
+  var legend = svg.selectAll("#legend")
+      .data(color_3class)
+      .enter()
+      .append("g")
+      .attr("id", "lab");
+
+  legend.append("rect")
+      .attr("x", function(d, i) {
+          return rect_width*(i-(i%3))/3 + margin;
+      })
+      .attr("y", function(d, i) {
+          return legend_y - rect_width*(i%3);
+      })
+      .attr("width", rect_width)
+      .attr("height", rect_width)
+      .style("fill", function(d){return d});
+
+  var arrowPoints = [[0, 0], [0, 10], [10, 5]];
+  var line_start = [legend_x-60, legend_y+35]; //the numbers are tested to be bottom of legend.
+  var line_end = [legend_x-60, legend_y+35-120];
+
+  var legend_arrow = legend.append('defs')
+      .append('marker')
+      .attr('id', 'arrow')
+      .attr('viewBox', [0, 0, 10, 10])
+      .attr('refX', 5)
+      .attr('refY', 5)
+      .attr('markerWidth', 10)
+      .attr('markerHeight', 10)
+      .attr('orient', 'auto')
+      .append('path')
+      .attr('d', d3.line()(arrowPoints))
+      .attr('stroke', 'white')
+      .attr('fill', 'white');
+
+  var legend_y_text = svg.append('text')
+      .attr('x', line_start[0]-70)
+      .attr('y', line_start[1]-40)
+      .attr('transform', 'translate(-60, -25) rotate(90,' + line_start[0] + ',' + line_start[1] + ')')
+      .attr('fill', 'white')
+      .text('Transit-dependent');
+
+  legend_x_text = svg.append('text')
+      .attr('x', line_start[0]+12)
+      .attr('y', line_start[1]+10)
+      .attr('transform', 'translate(17, 17) rotate(0,' + line_start[0] + ',' + line_start[1] + ')')
+      .attr('fill', 'white')
+      .text('Accessibility');
+
+  svg.append('text')
+      .attr('x', line_start[0]-35)
+      .attr('y', line_start[1]+14)
+      .attr('fill', 'white')
+      .text('Low');
+  svg.append('text')
+      .attr('x', line_end[0]+131)
+      .attr('y', line_end[1]+134)
+      .attr('fill', 'white')
+      .text('High');
+  
+  var y_downbound = svg.append('text')
+      .attr('x', line_start[0]+15)
+      .attr('y', line_start[1]+2)
+      .attr('fill', 'white')
+      .text('Low')
+      .attr('transform', 'translate(0, 10) rotate(90,' + line_start[0] + ',' + line_start[1] + ')');
+  var y_upbound = svg.append('text')
+      .attr('x', line_end[0]-157)
+      .attr('y', line_end[1]+122)
+      .attr('fill', 'white')
+      .text('High')
+      .attr('transform', 'translate(0, 10) rotate(90,' + line_start[0] + ',' + line_start[1] + ')');
+  
+  var y_line = svg.append('path')
+      .attr('d', d3.line()([line_start, line_end]))
+      .attr('stroke', 'white')
+      .attr('marker-end', 'url(#arrow)')
+      .attr('fill', 'white')
+      .attr('transform', 'translate(0, 10) rotate(0,' + line_start[0] + ',' + line_start[1] + ')');
+
+  svg.append('path')
+      .attr('d', d3.line()([line_start, line_end]))
+      .attr('stroke', 'white')
+      .attr('marker-end', 'url(#arrow)')
+      .attr('fill', 'white')
+      .attr('transform', 'translate(0, 10) rotate(90,' + line_start[0] + ',' + line_start[1] + ')');
+
+
+  // console.log(rects_base["_groups"][0])
+  let demand_filter = 'dep'
+  let time_filter = '45'
+  let label = "dep_45"
+  let label_biv = ""
+  let label_cho = ""
+  let color_cho = ""
+  
+  // print the specified color due to the clicked label
+  for (let i = 1; i < 4; i++) {
+          legend['_groups']['0'][i-1]['__data__'] = 'A'+i;      
+  }
+  for (let i = 1; i < 4; i++) {
+          legend['_groups']['0'][i+2]['__data__'] = 'B'+i;      
+  }
+  for (let i = 1; i < 4; i++) {
+          legend['_groups']['0'][i+5]['__data__'] = 'C'+i;      
+  }
+
+  var rect_cho = legend.selectAll('rect')
+
+  rect_elements = rect_cho.nodes();
+
+  rect_cho
+    .on('mouseover', function() {
+      d3.select(this)
+        .style('stroke', 'black')
+        .style('stroke-width', '3px')
+        .style('stroke-linecap', 'round')
+        .style('opacity', 0.7);
+  })
+    .on('mouseout', function() {
+      d3.select(this)
+        .style('stroke', 'none')
+        .style('opacity', 1);
+    })
+
+  // map the base block group data
+  map_bef.on('load', () => {
+    // Add a custom vector tileset source
+  
+  map_bef.addSource('biv_bef_0513_abs45', {type: 'vector', url: "mapbox://lsj97.biv_bef_0513_abs45"});
+  
+  map_bef.addLayer(
+  {
+      'id': 'bef_base',
+      'type': 'fill',
+      'source': 'biv_bef_0513_abs45',
+      'source-layer': 'biv_bef_0513_abs45',
+      'paint': {
+      'fill-color': [
+          'match', ['get', label],
+                  'A1', color_3class_14['A1'],
+                  'A2', color_3class_14['A2'],
+                  'A3', color_3class_14['A3'],
+                  'B1', color_3class_14['B1'],
+                  'B2', color_3class_14['B2'],
+                  'B3', color_3class_14['B3'],
+                  'C1', color_3class_14['C1'],
+                  'C2', color_3class_14['C2'],
+                  'C3', color_3class_14['C3'],
+                  'black'
+              ],
+              'fill-opacity': 0.7,
+              'fill-outline-color': 'rgba(0,0,0,0.1)'
+        }
+      },
+    );
+
+  map_bef.addLayer(
+  {
+      'id': 'bef_over',
+      'type': 'fill',
+      'source': 'biv_bef_0513_abs45',
+      'source-layer': 'biv_bef_0513_abs45',
+      'paint': {
+      'fill-color': [
+          'match', ['get', label],
+                  'A1', color_3class_14['A1'],
+                  'A2', color_3class_14['A2'],
+                  'A3', color_3class_14['A3'],
+                  'B1', color_3class_14['B1'],
+                  'B2', color_3class_14['B2'],
+                  'B3', color_3class_14['B3'],
+                  'C1', color_3class_14['C1'],
+                  'C2', color_3class_14['C2'],
+                  'C3', color_3class_14['C3'],
+                  'black'
+              ],
+              'fill-opacity': 0.7,
+              'fill-outline-color': 'rgba(0,0,0,0.1)'
+        }
+      },
+    );
+  
+  document.getElementById('demand').addEventListener('change', (event) => {
+      const demand_target = event.target.value;
+
+      demand_filter = demand_target;
+
+      label = demand_filter + '_' + time_filter;
+
+  map_bef.setPaintProperty(
+      'bef_base',
+      'fill-color', [
+          "match", ["get", label],
+                  'A1', color_3class_14['A1'],
+                  'A2', color_3class_14['A2'],
+                  'A3', color_3class_14['A3'],
+                  'B1', color_3class_14['B1'],
+                  'B2', color_3class_14['B2'],
+                  'B3', color_3class_14['B3'],
+                  'C1', color_3class_14['C1'],
+                  'C2', color_3class_14['C2'],
+                  'C3', color_3class_14['C3'],
+                  'black'
+              ]
+      );
+  map_bef.setPaintProperty(
+      'bef_over',
+      'fill-color', [
+          "match", ["get", label],
+                  'A1', color_3class_14['A1'],
+                  'A2', color_3class_14['A2'],
+                  'A3', color_3class_14['A3'],
+                  'B1', color_3class_14['B1'],
+                  'B2', color_3class_14['B2'],
+                  'B3', color_3class_14['B3'],
+                  'C1', color_3class_14['C1'],
+                  'C2', color_3class_14['C2'],
+                  'C3', color_3class_14['C3'],
+                  'black'
+              ]
+      );
+  });
+
+  slider.addEventListener('input', (a) => {
+    sliderValue.innerHTML = a.target.value;
+
+    time_filter = a.target.value;
+
+    label = demand_filter + '_' + time_filter;
+
+  map_bef.setPaintProperty(
+      'bef_base',
+      'fill-color', [
+          "match", ["get", label],
+                  'A1', color_3class_14['A1'],
+                  'A2', color_3class_14['A2'],
+                  'A3', color_3class_14['A3'],
+                  'B1', color_3class_14['B1'],
+                  'B2', color_3class_14['B2'],
+                  'B3', color_3class_14['B3'],
+                  'C1', color_3class_14['C1'],
+                  'C2', color_3class_14['C2'],
+                  'C3', color_3class_14['C3'],
+                  'black'
+              ]
+      );
+  map_bef.setPaintProperty(
+      'bef_over',
+      'fill-color', [
+          "match", ["get", label],
+                  'A1', color_3class_14['A1'],
+                  'A2', color_3class_14['A2'],
+                  'A3', color_3class_14['A3'],
+                  'B1', color_3class_14['B1'],
+                  'B2', color_3class_14['B2'],
+                  'B3', color_3class_14['B3'],
+                  'C1', color_3class_14['C1'],
+                  'C2', color_3class_14['C2'],
+                  'C3', color_3class_14['C3'],
+                  'black'
+              ]
+      );
+  });
+
+
+  // legend.on("click", function(d) {
+  //     label_biv = d
+  //     map_bef.setPaintProperty(
+  //         'bef_over',
+  //         'fill-color', ["match",["get", label],
+  //                 label_biv, color_3class_14[label_biv],
+  //                 'black'
+  //         ]
+  //     )
+  //     map_aft.setPaintProperty(
+  //         'aft_over',
+  //         'fill-color', ["match",["get", label],
+  //                 label_biv, color_3class_14[label_biv],
+  //                 'black'
+  //         ]
+  //     )
+
+  //   console.log(label_biv)
+  // });
+
+  map_bef.on('click', 'bef_base', (es) => {
+    label_cho = label
+    color_cho = es.features['0']['properties'][label]
+
+    map_bef.setPaintProperty(
+          'bef_over',
+          'fill-color', ["match",["get", label_cho],
+                  color_cho, color_3class_14[color_cho],
+                  'black'
+          ]
+      )
+      map_aft.setPaintProperty(
+          'aft_over',
+          'fill-color', ["match",["get", label_cho],
+                  color_cho, color_3class_14[color_cho],
+                  'black'
+          ]
+      )
+
+    if (color_cho === (rect_cho['_parents']['8']['__data__'])) {
+      d3.select(rect_elements[8])
+        .style('stroke', 'black')
+        .style('stroke-width', '3px')
+        .style('opacity', 0.7);
+      for (let i = 0; i < 8; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+    }
+    else if (color_cho === (rect_cho['_parents']['7']['__data__'])) {
+      d3.select(rect_elements[7])
+        .style('stroke', 'black')
+        .style('stroke-width', '3px')
+        .style('opacity', 0.7);
+      for (let i = 0; i < 7; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+      for (let i = 8; i < 9; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+    }
+    else if (color_cho === (rect_cho['_parents']['6']['__data__'])) {
+      d3.select(rect_elements[6])
+        .style('stroke', 'black')
+        .style('stroke-width', '3px')
+        .style('opacity', 0.7);
+      for (let i = 0; i < 6; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+      for (let i = 7; i < 9; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+    }
+    else if (color_cho === (rect_cho['_parents']['5']['__data__'])) {
+      d3.select(rect_elements[5])
+        .style('stroke', 'black')
+        .style('stroke-width', '3px')
+        .style('opacity', 0.7);
+      for (let i = 0; i < 5; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+      for (let i = 6; i < 9; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+    }
+    else if (color_cho === (rect_cho['_parents']['4']['__data__'])) {
+      d3.select(rect_elements[4])
+        .style('stroke', 'black')
+        .style('stroke-width', '3px')
+        .style('opacity', 0.7);
+      for (let i = 0; i < 4; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+      for (let i = 5; i < 9; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+    }
+    else if (color_cho === (rect_cho['_parents']['3']['__data__'])) {
+      d3.select(rect_elements[3])
+        .style('stroke', 'black')
+        .style('stroke-width', '3px')
+        .style('opacity', 0.7);
+      for (let i = 0; i < 3; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+      for (let i = 4; i < 9; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+    }
+    else if (color_cho === (rect_cho['_parents']['2']['__data__'])) {
+      d3.select(rect_elements[2])
+        .style('stroke', 'black')
+        .style('stroke-width', '3px')
+        .style('opacity', 0.7);
+      for (let i = 0; i < 2; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+      for (let i = 3; i < 9; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+    }
+    else if (color_cho === (rect_cho['_parents']['1']['__data__'])) {
+      d3.select(rect_elements[1])
+        .style('stroke', 'black')
+        .style('stroke-width', '3px')
+        .style('opacity', 0.7);
+      for (let i = 0; i < 1; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+      for (let i = 2; i < 9; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+    }
+    else if (color_cho === (rect_cho['_parents']['0']['__data__'])) {
+      d3.select(rect_elements[0])
+        .style('stroke', 'black')
+        .style('stroke-width', '3px')
+        .style('opacity', 0.7);
+      for (let i = 1; i < 9; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+    }
+  });
+
+  }) //map.on.load ends here
+
+      // map the base block group data
+  map_aft.on('load', () => {
+    // Add a custom vector tileset source
+    map_aft.addSource('biv_aft_0510_abs45', {type: 'vector', url: "mapbox://lsj97.biv_aft_0513_abs45"});
+
+    map_aft.addLayer(
+      {
+        'id': 'aft_base',
+        'type': 'fill',
+        'source': 'biv_aft_0510_abs45',
+        'source-layer': 'biv_aft_0510_abs45',
+        'paint': {
+          'fill-color': [
+              'match', ['get', label],
+                  'A1', color_3class_14['A1'],
+                  'A2', color_3class_14['A2'],
+                  'A3', color_3class_14['A3'],
+                  'B1', color_3class_14['B1'],
+                  'B2', color_3class_14['B2'],
+                  'B3', color_3class_14['B3'],
+                  'C1', color_3class_14['C1'],
+                  'C2', color_3class_14['C2'],
+                  'C3', color_3class_14['C3'],
+                  'black'
+                  ],
+                  'fill-opacity': 0.7,
+                  'fill-outline-color': 'rgba(0,0,0,0.1)'
+        }
+      },
+    );
+
+    
+  map_aft.addLayer(
+    {
+      'id': 'aft_over',
+      'type': 'fill',
+      'source': 'biv_aft_0510_abs45',
+      'source-layer': 'biv_aft_0510_abs45',
+      'paint': {
+      'fill-color': [
+          'match', ['get', label],
+                  'A1', color_3class_14['A1'],
+                  'A2', color_3class_14['A2'],
+                  'A3', color_3class_14['A3'],
+                  'B1', color_3class_14['B1'],
+                  'B2', color_3class_14['B2'],
+                  'B3', color_3class_14['B3'],
+                  'C1', color_3class_14['C1'],
+                  'C2', color_3class_14['C2'],
+                  'C3', color_3class_14['C3'],
+                  'black'
+              ],
+              'fill-opacity': 0.7,
+              'fill-outline-color': 'rgba(0,0,0,0.1)'
+        }
+      },
+    );
+
+  document.getElementById('demand').addEventListener('change', (event) => {
+    const demand_target = event.target.value;
+
+    demand_filter = demand_target;
+
+    label = demand_filter + '_' + time_filter;
+    console.log(label)
+  map_aft.setPaintProperty(
+      'aft_base',
+      'fill-color', [
+          "match", ["get", label],
+                  'A1', color_3class_14['A1'],
+                  'A2', color_3class_14['A2'],
+                  'A3', color_3class_14['A3'],
+                  'B1', color_3class_14['B1'],
+                  'B2', color_3class_14['B2'],
+                  'B3', color_3class_14['B3'],
+                  'C1', color_3class_14['C1'],
+                  'C2', color_3class_14['C2'],
+                  'C3', color_3class_14['C3'],
+                  'black'
+              ]
+      )
+  map_aft.setPaintProperty(
+      'aft_over',
+      'fill-color', [
+          "match", ["get", label],
+                  'A1', color_3class_14['A1'],
+                  'A2', color_3class_14['A2'],
+                  'A3', color_3class_14['A3'],
+                  'B1', color_3class_14['B1'],
+                  'B2', color_3class_14['B2'],
+                  'B3', color_3class_14['B3'],
+                  'C1', color_3class_14['C1'],
+                  'C2', color_3class_14['C2'],
+                  'C3', color_3class_14['C3'],
+                  'black'
+              ]
+      )
+  });
+
+  slider.addEventListener('input', (a) => {
+    sliderValue.innerHTML = a.target.value;
+
+    time_filter = a.target.value;
+
+    label = demand_filter + '_' + time_filter;
+  
+    map_aft.setPaintProperty(
+      'aft_base',
+      'fill-color', [
+          "match", ["get", label],
+                  'A1', color_3class_14['A1'],
+                  'A2', color_3class_14['A2'],
+                  'A3', color_3class_14['A3'],
+                  'B1', color_3class_14['B1'],
+                  'B2', color_3class_14['B2'],
+                  'B3', color_3class_14['B3'],
+                  'C1', color_3class_14['C1'],
+                  'C2', color_3class_14['C2'],
+                  'C3', color_3class_14['C3'],
+                  'black'
+              ]
+      );
+  map_aft.setPaintProperty(
+      'aft_over',
+      'fill-color', [
+          "match", ["get", label],
+                  'A1', color_3class_14['A1'],
+                  'A2', color_3class_14['A2'],
+                  'A3', color_3class_14['A3'],
+                  'B1', color_3class_14['B1'],
+                  'B2', color_3class_14['B2'],
+                  'B3', color_3class_14['B3'],
+                  'C1', color_3class_14['C1'],
+                  'C2', color_3class_14['C2'],
+                  'C3', color_3class_14['C3'],
+                  'black'
+              ]
+      );
+  });
+
+  // legend.on("click", function(d) {
+  //     label_biv = d
+  //     map_bef.setPaintProperty(
+  //         'bef_over',
+  //         'fill-color', ["match",["get", label],
+  //                 label_biv, color_3class_14[label_biv],
+  //                 'black'
+  //         ]
+  //     )
+  //     map_aft.setPaintProperty(
+  //         'aft_over',
+  //         'fill-color', ["match",["get", label],
+  //                 label_biv, color_3class_14[label_biv],
+  //                 'black'
+  //         ]
+  //     )
+
+  // });
+  
+  map_aft.on('click', 'aft_base', (er) => {
+    label_cho = label
+    color_cho = er.features['0']['properties'][label]
+
+    map_bef.setPaintProperty(
+          'bef_over',
+          'fill-color', ["match",["get", label_cho],
+                  color_cho, color_3class_14[color_cho],
+                  'black'
+          ]
+      )
+      map_aft.setPaintProperty(
+          'aft_over',
+          'fill-color', ["match",["get", label_cho],
+                  color_cho, color_3class_14[color_cho],
+                  'black'
+          ]
+      )
+
+    if (color_cho === (rect_cho['_parents']['8']['__data__'])) {
+      d3.select(rect_elements[8])
+        .style('stroke', 'black')
+        .style('stroke-width', '3px')
+        .style('opacity', 0.7);
+      for (let i = 0; i < 8; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+    }
+    else if (color_cho === (rect_cho['_parents']['7']['__data__'])) {
+      d3.select(rect_elements[7])
+        .style('stroke', 'black')
+        .style('stroke-width', '3px')
+        .style('opacity', 0.7);
+      for (let i = 0; i < 7; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+      for (let i = 8; i < 9; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+    }
+    else if (color_cho === (rect_cho['_parents']['6']['__data__'])) {
+      d3.select(rect_elements[6])
+        .style('stroke', 'black')
+        .style('stroke-width', '3px')
+        .style('opacity', 0.7);
+      for (let i = 0; i < 6; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+      for (let i = 7; i < 9; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+    }
+    else if (color_cho === (rect_cho['_parents']['5']['__data__'])) {
+      d3.select(rect_elements[5])
+        .style('stroke', 'black')
+        .style('stroke-width', '3px')
+        .style('opacity', 0.7);
+      for (let i = 0; i < 5; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+      for (let i = 6; i < 9; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+    }
+    else if (color_cho === (rect_cho['_parents']['4']['__data__'])) {
+      d3.select(rect_elements[4])
+        .style('stroke', 'black')
+        .style('stroke-width', '3px')
+        .style('opacity', 0.7);
+      for (let i = 0; i < 4; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+      for (let i = 5; i < 9; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+    }
+    else if (color_cho === (rect_cho['_parents']['3']['__data__'])) {
+      d3.select(rect_elements[3])
+        .style('stroke', 'black')
+        .style('stroke-width', '3px')
+        .style('opacity', 0.7);
+      for (let i = 0; i < 3; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+      for (let i = 4; i < 9; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+    }
+    else if (color_cho === (rect_cho['_parents']['2']['__data__'])) {
+      d3.select(rect_elements[2])
+        .style('stroke', 'black')
+        .style('stroke-width', '3px')
+        .style('opacity', 0.7);
+      for (let i = 0; i < 2; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+      for (let i = 3; i < 9; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+    }
+    else if (color_cho === (rect_cho['_parents']['1']['__data__'])) {
+      d3.select(rect_elements[1])
+        .style('stroke', 'black')
+        .style('stroke-width', '3px')
+        .style('opacity', 0.7);
+      for (let i = 0; i < 1; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+      for (let i = 2; i < 9; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+    }
+    else if (color_cho === (rect_cho['_parents']['0']['__data__'])) {
+      d3.select(rect_elements[0])
+        .style('stroke', 'black')
+        .style('stroke-width', '3px')
+        .style('opacity', 0.7);
+      for (let i = 1; i < 9; i++) {
+        d3.select(rect_elements[i])
+          .style('stroke', 'none')
+          .style('opacity', 1);
+      }
+    }
+  })
+
+  });
+  
+  legend.on("click", function(d) {
+      label_biv = d
+      map_bef.setPaintProperty(
+          'bef_over',
+          'fill-color', ["match",["get", label],
+                  label_biv, color_3class_14[label_biv],
+                  'black'
+          ]
+      )
+      map_aft.setPaintProperty(
+          'aft_over',
+          'fill-color', ["match",["get", label],
+                  label_biv, color_3class_14[label_biv],
+                  'black'
+          ]
+      )
+
+    console.log(label)
+    console.log(label_biv)
+  });
+
+  function coordinate() {
+
+  var disable = false;
+
+  map_bef.on('move', function() {
+    if (!disable) {
+      var center = map_bef.getCenter();
+      var zoom = map_bef.getZoom();
+      var pitch = map_bef.getPitch();
+      var bearing = map_bef.getBearing();
+
+      disable = true;
+      map_aft.setCenter(center);
+      map_aft.setZoom(zoom);
+      map_aft.setPitch(pitch);
+      map_aft.setBearing(bearing);
+      disable = false;
+    }
+  })
+
+  map_aft.on('move', function() {
+    if (!disable) {
+      var center = map_aft.getCenter();
+      var zoom = map_aft.getZoom();
+      var pitch = map_aft.getPitch();
+      var bearing = map_aft.getBearing();
+
+      disable = true;
+      map_bef.setCenter(center);
+      map_bef.setZoom(zoom);
+      map_bef.setPitch(pitch);
+      map_bef.setBearing(bearing);
+      disable = false;
+    }
+  })
+  }
+
+  coordinate();
+
+  function legend_dep() {
+  legend_y_text
+      .text('Transit-dependent')
+      .attr('x', line_start[0]-70);
+  y_line
+      .attr('d', d3.line()([line_start, line_end]))
+  y_downbound
+      .text('Low');
+  y_upbound
+      .text('High');
+  };
+
+  function legend_min() {   
+  legend_y_text
+      .text('Minority')
+      .attr('x', line_start[0]-40);
+  y_line
+      .attr('d', d3.line()([line_start, line_end]))
+  y_downbound
+      .text('Low');
+  y_upbound
+      .text('High');
+  };
+
+  function legend_inc() {
+  legend_y_text
+      .text('Income')
+      .attr('x', line_start[0]-40);
+  y_line
+      .attr('d', d3.line()([line_end, line_start]))
+  y_downbound
+      .text('High');
+  y_upbound
+      .text('Low');
+  };
+
+  
+</script>
+
+</body>
+</html>
